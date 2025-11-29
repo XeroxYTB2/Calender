@@ -64,6 +64,70 @@
     #resetBtn:hover {
         background:#c9302c;
     }
+
+    /* ----------------------------- */
+    /*      POPUP (style Snapchat)   */
+    /* ----------------------------- */
+
+    #popupOverlay {
+        position: fixed;
+        top:0; left:0;
+        width:100%; height:100%;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(4px);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        visibility:hidden;
+        opacity:0;
+        transition:0.25s;
+        z-index:1000;
+    }
+
+    #popupOverlay.active {
+        visibility: visible;
+        opacity:1;
+    }
+
+    #popupBox {
+        background:white;
+        color:black;
+        width:300px;
+        padding:20px;
+        border-radius:18px;
+        text-align:center;
+        box-shadow:0 8px 25px rgba(0,0,0,0.4);
+        transform:scale(0.8);
+        transition:0.25s;
+    }
+
+    #popupOverlay.active #popupBox {
+        transform:scale(1);
+    }
+
+    #popupMessage {
+        font-size:18px;
+        margin-bottom:20px;
+    }
+
+    .popupBtn {
+        padding:10px 15px;
+        font-size:16px;
+        border:none;
+        border-radius:10px;
+        cursor:pointer;
+        margin:5px;
+    }
+
+    .btnConfirm {
+        background:#4CAF50;
+        color:white;
+    }
+
+    .btnCancel {
+        background:#d9534f;
+        color:white;
+    }
 </style>
 </head>
 
@@ -74,13 +138,45 @@
 <div id="calendar"></div>
 <button id="resetBtn">Annuler la dernière ouverture</button>
 
+<!-- POPUP PERSONALISÉE -->
+<div id="popupOverlay">
+    <div id="popupBox">
+        <div id="popupMessage"></div>
+        <div id="popupButtons"></div>
+    </div>
+</div>
+
 <script>
 // ---------------------------
-// 1. Génération dynamique des cases
+// Gestion de pop-ups custom
+// ---------------------------
+function showPopup(message, buttons = []) {
+    const overlay = document.getElementById("popupOverlay");
+    const msgBox = document.getElementById("popupMessage");
+    const btnBox = document.getElementById("popupButtons");
+
+    msgBox.textContent = message;
+    btnBox.innerHTML = "";
+
+    buttons.forEach(btn => {
+        const b = document.createElement("button");
+        b.textContent = btn.text;
+        b.className = "popupBtn " + (btn.class || "");
+        b.onclick = () => {
+            overlay.classList.remove("active");
+            if (btn.action) btn.action();
+        };
+        btnBox.appendChild(b);
+    });
+
+    overlay.classList.add("active");
+}
+
+// ---------------------------
+// 1. Génération dynamique
 // ---------------------------
 const calendar = document.getElementById("calendar");
 
-// Charger l'état depuis le localStorage
 let openedDays = JSON.parse(localStorage.getItem("openedDays")) || [];
 
 function createCalendar() {
@@ -105,11 +201,13 @@ function createCalendar() {
 }
 
 // ---------------------------
-// 2. Lorsqu’on clique une case
+// 2. Ouverture d’une case
 // ---------------------------
 function openDay(day, element) {
-    alert("🎁 Tu as ouvert la case " + day + " !");
-    
+    showPopup("🎁 Tu as ouvert la case " + day + " !", [
+        { text:"OK", class:"btnConfirm" }
+    ]);
+
     if (!openedDays.includes(day)) {
         openedDays.push(day);
         localStorage.setItem("openedDays", JSON.stringify(openedDays));
@@ -120,38 +218,40 @@ function openDay(day, element) {
 }
 
 // ---------------------------
-// 3. Bouton RESET = retire la dernière case ouverte
+// 3. Reset = retire dernière case
 // ---------------------------
 document.getElementById("resetBtn").onclick = () => {
 
     if (openedDays.length === 0) {
-        alert("❗ Aucune case ouverte à annuler.");
+        showPopup("❗ Aucune case ouverte à annuler.", [
+            { text:"OK", class:"btnConfirm" }
+        ]);
         return;
     }
 
     const last = openedDays[openedDays.length - 1];
 
-    const confirmReset = confirm(
-        "❓ Veux-tu vraiment annuler l’ouverture de la case " + last + " ?"
-    );
-
-    if (!confirmReset) return;
-
-    // Supprimer uniquement la DERNIÈRE case ouverte
-    openedDays.pop();
-
-    // Sauver le nouvel état
-    localStorage.setItem("openedDays", JSON.stringify(openedDays));
-
-    // Recréer l'affichage
-    createCalendar();
+    showPopup("❓ Annuler l’ouverture de la case " + last + " ?", [
+        {
+            text:"Oui",
+            class:"btnConfirm",
+            action: () => {
+                openedDays.pop();
+                localStorage.setItem("openedDays", JSON.stringify(openedDays));
+                createCalendar();
+            }
+        },
+        {
+            text:"Non",
+            class:"btnCancel"
+        }
+    ]);
 };
 
 // ---------------------------
 // Initialisation
 // ---------------------------
 createCalendar();
-
 </script>
 
 </body>
