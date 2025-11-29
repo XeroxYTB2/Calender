@@ -14,18 +14,15 @@
         color:white;
         position:relative;
     }
-
-    h1 { margin-bottom:20px; }
-
+    h1 { margin-bottom:20px; font-size:2.5em; }
     #calendar {
         display:grid;
-        grid-template-columns: repeat(6, 150px);
-        grid-gap:15px;
+        grid-template-columns: repeat(6, 200px);
+        grid-gap:20px;
     }
-
     .day {
-        width:150px;
-        height:120px;
+        width:200px;
+        height:180px;
         background:#b42222;
         color:white;
         border-radius:10px;
@@ -34,23 +31,20 @@
         justify-content:center;
         align-items:center;
         cursor:pointer;
-        font-size:20px;
+        font-size:24px;
         transition:0.3s;
         border:3px solid #8c1e1e;
     }
-
     .opened {
         background:#e4d32b;
         color:black;
         border:3px solid #c7b924;
     }
-
-    .label { font-size:14px; margin-top:6px; }
-
+    .label { font-size:16px; margin-top:8px; text-align:center; }
     #resetBtn {
         margin-top:30px;
-        padding:10px 20px;
-        font-size:18px;
+        padding:12px 24px;
+        font-size:20px;
         border:none;
         border-radius:8px;
         background:#d9534f;
@@ -59,34 +53,25 @@
         transition:0.3s;
     }
     #resetBtn:hover { background:#c9302c; }
-
-    /* ----------- BOUTON PLEIN ECRAN ----------- */
     #fullscreenBtn {
         position:fixed;
         top:20px;
         right:20px;
-        width:50px;
-        height:50px;
+        width:60px;
+        height:60px;
         background:#ffffffcc;
         border-radius:50%;
         display:flex;
         align-items:center;
         justify-content:center;
         cursor:pointer;
-        font-size:22px;
+        font-size:26px;
         color:#0f3f36;
         transition:0.3s;
         border:none;
         z-index:999;
     }
-    #fullscreenBtn:hover {
-        background:white;
-        transform:scale(1.1);
-    }
-
-    /* ----------------------------- */
-    /*      POPUP (style Snapchat)   */
-    /* ----------------------------- */
+    #fullscreenBtn:hover { background:white; transform:scale(1.1); }
 
     #popupOverlay {
         position: fixed;
@@ -102,33 +87,21 @@
         transition:0.25s;
         z-index:1000;
     }
-
-    #popupOverlay.active {
-        visibility: visible;
-        opacity:1;
-    }
-
+    #popupOverlay.active { visibility: visible; opacity:1; }
     #popupBox {
         background:white;
         color:black;
-        width:300px;
-        padding:20px;
+        width:400px;
+        padding:30px;
         border-radius:18px;
         text-align:center;
         box-shadow:0 8px 25px rgba(0,0,0,0.4);
         transform:scale(0.8);
         transition:0.25s;
+        position:relative;
     }
-
-    #popupOverlay.active #popupBox {
-        transform:scale(1);
-    }
-
-    #popupMessage {
-        font-size:18px;
-        margin-bottom:20px;
-    }
-
+    #popupOverlay.active #popupBox { transform:scale(1); }
+    #popupMessage { font-size:20px; margin-bottom:20px; }
     .popupBtn {
         padding:10px 15px;
         font-size:16px;
@@ -137,22 +110,44 @@
         cursor:pointer;
         margin:5px;
     }
+    .btnConfirm { background:#4CAF50; color:white; }
+    .btnCancel { background:#d9534f; color:white; }
 
-    .btnConfirm {
-        background:#4CAF50;
-        color:white;
+    /* Drapeau allemand */
+    #germanFlag {
+        width:200px;
+        height:120px;
+        margin:15px auto;
+        border:2px solid #000;
+        cursor:pointer;
+        position:relative;
     }
+    .stripe {
+        width:100%;
+        height:33.33%;
+        transition:background 0.5s;
+    }
+    #black { background:black; opacity:0; }
+    #red { background:red; opacity:0; }
+    #yellow { background:yellow; opacity:0; }
 
-    .btnCancel {
-        background:#d9534f;
-        color:white;
+    /* Confettis */
+    .confetti {
+        position:absolute;
+        width:8px;
+        height:8px;
+        border-radius:50%;
+        pointer-events:none;
+        animation:fall 1s forwards;
+    }
+    @keyframes fall {
+        0% { transform:translateY(0) scale(1); opacity:1; }
+        100% { transform:translateY(200px) scale(0.5); opacity:0; }
     }
 </style>
 </head>
-
 <body>
 
-<!-- Bouton plein écran -->
 <button id="fullscreenBtn">⛶</button>
 
 <h1>🎄 Calendrier de l'Avent 🎄</h1>
@@ -160,10 +155,10 @@
 <div id="calendar"></div>
 <button id="resetBtn">Annuler la dernière ouverture</button>
 
-<!-- POPUP -->
 <div id="popupOverlay">
     <div id="popupBox">
         <div id="popupMessage"></div>
+        <div id="flagContainer"></div>
         <div id="popupButtons"></div>
     </div>
 </div>
@@ -172,13 +167,15 @@
 // ---------------------------
 // POPUP CUSTOM
 // ---------------------------
-function showPopup(message, buttons = []) {
+function showPopup(message, buttons = [], extraHTML = "") {
     const overlay = document.getElementById("popupOverlay");
     const msgBox = document.getElementById("popupMessage");
     const btnBox = document.getElementById("popupButtons");
+    const flagContainer = document.getElementById("flagContainer");
 
     msgBox.textContent = message;
     btnBox.innerHTML = "";
+    flagContainer.innerHTML = extraHTML;
 
     buttons.forEach(btn => {
         const b = document.createElement("button");
@@ -202,7 +199,6 @@ let openedDays = JSON.parse(localStorage.getItem("openedDays")) || [];
 
 function createCalendar() {
     calendar.innerHTML = "";
-
     for (let i = 1; i <= 24; i++) {
         const div = document.createElement("div");
         div.classList.add("day");
@@ -212,11 +208,8 @@ function createCalendar() {
             <div>${i}</div>
             <div class="label">${openedDays.includes(i) ? "Déjà ouverte 🎁" : "À ouvrir 🎄"}</div>
         `;
-
         if (openedDays.includes(i)) div.classList.add("opened");
-
         div.onclick = () => openDay(i, div);
-
         calendar.appendChild(div);
     }
 }
@@ -225,33 +218,65 @@ function createCalendar() {
 // OUVERTURE CASE
 // ---------------------------
 function openDay(day, element) {
-    showPopup("🎁 Tu as ouvert la case " + day + " !", [
-        { text:"OK", class:"btnConfirm" }
-    ]);
+    if(day === 1 && !openedDays.includes(1)){
+        // Première case spéciale
+        const flagHTML = `
+        <div id="germanFlag">
+            <div class="stripe" id="black"></div>
+            <div class="stripe" id="red"></div>
+            <div class="stripe" id="yellow"></div>
+        </div>`;
+        showPopup("Welche Farbe hat die Deutsche Flagge ?", [
+            { text:"OK", class:"btnConfirm" }
+        ], flagHTML);
+
+        const flag = document.getElementById("germanFlag");
+        flag.onclick = () => {
+            document.getElementById("black").style.opacity = 1;
+            document.getElementById("red").style.opacity = 1;
+            document.getElementById("yellow").style.opacity = 1;
+            triggerConfetti(flag, ["black","red","yellow"]);
+        };
+    } else {
+        showPopup("🎁 Tu as ouvert la case " + day + " !", [
+            { text:"OK", class:"btnConfirm" }
+        ]);
+    }
 
     if (!openedDays.includes(day)) {
         openedDays.push(day);
         localStorage.setItem("openedDays", JSON.stringify(openedDays));
     }
-
     element.classList.add("opened");
     element.querySelector(".label").textContent = "Déjà ouverte 🎁";
+}
+
+// ---------------------------
+// CONFETTI
+// ---------------------------
+function triggerConfetti(element, colors){
+    for(let i=0;i<50;i++){
+        const conf = document.createElement("div");
+        conf.classList.add("confetti");
+        conf.style.background = colors[Math.floor(Math.random()*colors.length)];
+        conf.style.left = Math.random()*element.offsetWidth + "px";
+        conf.style.top = Math.random()*element.offsetHeight + "px";
+        element.appendChild(conf);
+        setTimeout(()=>conf.remove(),1000 + Math.random()*500);
+    }
 }
 
 // ---------------------------
 // RESET DERNIÈRE CASE
 // ---------------------------
 document.getElementById("resetBtn").onclick = () => {
-
     if (openedDays.length === 0) {
         showPopup("❗ Aucune case ouverte à annuler.", [
             { text:"OK", class:"btnConfirm" }
         ]);
         return;
     }
-
     const last = openedDays[openedDays.length - 1];
-
     showPopup("❓ Annuler l’ouverture de la case " + last + " ?", [
         {
             text:"Oui",
@@ -262,10 +287,7 @@ document.getElementById("resetBtn").onclick = () => {
                 createCalendar();
             }
         },
-        {
-            text:"Non",
-            class:"btnCancel"
-        }
+        { text:"Non", class:"btnCancel" }
     ]);
 };
 
@@ -273,7 +295,6 @@ document.getElementById("resetBtn").onclick = () => {
 // MODE PLEIN ECRAN
 // ---------------------------
 const fullscreenBtn = document.getElementById("fullscreenBtn");
-
 fullscreenBtn.onclick = () => {
     if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
@@ -283,12 +304,8 @@ fullscreenBtn.onclick = () => {
         fullscreenBtn.textContent = "⛶";
     }
 };
-
-// Réagir au changement (si l’utilisateur quitte avec ESC)
 document.addEventListener("fullscreenchange", () => {
-    if (!document.fullscreenElement) {
-        fullscreenBtn.textContent = "⛶";
-    }
+    if (!document.fullscreenElement) fullscreenBtn.textContent = "⛶";
 });
 
 // ---------------------------
@@ -296,6 +313,5 @@ document.addEventListener("fullscreenchange", () => {
 // ---------------------------
 createCalendar();
 </script>
-
 </body>
 </html>
