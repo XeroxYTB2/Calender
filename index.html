@@ -12,6 +12,7 @@
         align-items:center;
         padding:20px;
         color:white;
+        position:relative;
     }
 
     h1 { margin-bottom:20px; }
@@ -44,10 +45,7 @@
         border:3px solid #c7b924;
     }
 
-    .label {
-        font-size:14px;
-        margin-top:6px;
-    }
+    .label { font-size:14px; margin-top:6px; }
 
     #resetBtn {
         margin-top:30px;
@@ -60,9 +58,30 @@
         cursor:pointer;
         transition:0.3s;
     }
+    #resetBtn:hover { background:#c9302c; }
 
-    #resetBtn:hover {
-        background:#c9302c;
+    /* ----------- BOUTON PLEIN ECRAN ----------- */
+    #fullscreenBtn {
+        position:fixed;
+        top:20px;
+        right:20px;
+        width:50px;
+        height:50px;
+        background:#ffffffcc;
+        border-radius:50%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        cursor:pointer;
+        font-size:22px;
+        color:#0f3f36;
+        transition:0.3s;
+        border:none;
+        z-index:999;
+    }
+    #fullscreenBtn:hover {
+        background:white;
+        transform:scale(1.1);
     }
 
     /* ----------------------------- */
@@ -133,12 +152,15 @@
 
 <body>
 
+<!-- Bouton plein écran -->
+<button id="fullscreenBtn">⛶</button>
+
 <h1>🎄 Calendrier de l'Avent 🎄</h1>
 
 <div id="calendar"></div>
 <button id="resetBtn">Annuler la dernière ouverture</button>
 
-<!-- POPUP PERSONALISÉE -->
+<!-- POPUP -->
 <div id="popupOverlay">
     <div id="popupBox">
         <div id="popupMessage"></div>
@@ -148,7 +170,7 @@
 
 <script>
 // ---------------------------
-// Gestion de pop-ups custom
+// POPUP CUSTOM
 // ---------------------------
 function showPopup(message, buttons = []) {
     const overlay = document.getElementById("popupOverlay");
@@ -173,10 +195,9 @@ function showPopup(message, buttons = []) {
 }
 
 // ---------------------------
-// 1. Génération dynamique
+// GÉNÉRATION CALENDRIER
 // ---------------------------
 const calendar = document.getElementById("calendar");
-
 let openedDays = JSON.parse(localStorage.getItem("openedDays")) || [];
 
 function createCalendar() {
@@ -201,7 +222,7 @@ function createCalendar() {
 }
 
 // ---------------------------
-// 2. Ouverture d’une case
+// OUVERTURE CASE
 // ---------------------------
 function openDay(day, element) {
     showPopup("🎁 Tu as ouvert la case " + day + " !", [
@@ -218,7 +239,7 @@ function openDay(day, element) {
 }
 
 // ---------------------------
-// 3. Reset = retire dernière case
+// RESET DERNIÈRE CASE
 // ---------------------------
 document.getElementById("resetBtn").onclick = () => {
 
@@ -249,7 +270,29 @@ document.getElementById("resetBtn").onclick = () => {
 };
 
 // ---------------------------
-// Initialisation
+// MODE PLEIN ECRAN
+// ---------------------------
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+fullscreenBtn.onclick = () => {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        fullscreenBtn.textContent = "🡸";
+    } else {
+        document.exitFullscreen();
+        fullscreenBtn.textContent = "⛶";
+    }
+};
+
+// Réagir au changement (si l’utilisateur quitte avec ESC)
+document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement) {
+        fullscreenBtn.textContent = "⛶";
+    }
+});
+
+// ---------------------------
+// INIT
 // ---------------------------
 createCalendar();
 </script>
