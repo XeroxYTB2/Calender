@@ -2,315 +2,255 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Calendrier de l'Avent</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpolygon points='50,12 78,52 22,52' fill='%231f9d55'/%3E%3Cpolygon points='50,32 86,80 14,80' fill='%2323ac5f'/%3E%3Cpolygon points='50,54 94,104 6,104' fill='%232bc26c'/%3E%3Crect x='43' y='104' width='14' height='14' rx='2' fill='%238b5a2b'/%3E%3Cpath d='M50 0l5 10 11 1-8 8 2 11-10-6-10 6 2-11-8-8 11-1z' fill='%23ffd93d'/%3E%3C/svg%3E">
 <style>
-    body {
-        background:#0f3f36;
-        font-family: Arial, sans-serif;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        padding:20px;
-        color:white;
-        position:relative;
-    }
-    h1 { margin-bottom:20px; font-size:2.5em; }
-    #calendar {
-        display:grid;
-        grid-template-columns: repeat(6, 200px);
-        grid-gap:20px;
-    }
-    .day {
-        width:200px;
-        height:180px;
-        background:#b42222;
-        color:white;
-        border-radius:10px;
-        display:flex;
-        flex-direction:column;
-        justify-content:center;
-        align-items:center;
-        cursor:pointer;
-        font-size:24px;
-        transition:0.3s;
-        border:3px solid #8c1e1e;
-    }
-    .opened {
-        background:#e4d32b;
-        color:black;
-        border:3px solid #c7b924;
-    }
-    .label { font-size:16px; margin-top:8px; text-align:center; }
-    #resetBtn {
-        margin-top:30px;
-        padding:12px 24px;
-        font-size:20px;
-        border:none;
-        border-radius:8px;
-        background:#d9534f;
-        color:white;
-        cursor:pointer;
-        transition:0.3s;
-    }
-    #resetBtn:hover { background:#c9302c; }
-    #fullscreenBtn {
-        position:fixed;
-        top:20px;
-        right:20px;
-        width:60px;
-        height:60px;
-        background:#ffffffcc;
-        border-radius:50%;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        cursor:pointer;
-        font-size:26px;
-        color:#0f3f36;
-        transition:0.3s;
-        border:none;
-        z-index:999;
-    }
-    #fullscreenBtn:hover { background:white; transform:scale(1.1); }
-
-    #popupOverlay {
-        position: fixed;
-        top:0; left:0;
-        width:100%; height:100%;
-        background: rgba(0,0,0,0.55);
-        backdrop-filter: blur(4px);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        visibility:hidden;
-        opacity:0;
-        transition:0.25s;
-        z-index:1000;
-    }
-    #popupOverlay.active { visibility: visible; opacity:1; }
-    #popupBox {
-        background:white;
-        color:black;
-        width:400px;
-        padding:30px;
-        border-radius:18px;
-        text-align:center;
-        box-shadow:0 8px 25px rgba(0,0,0,0.4);
-        transform:scale(0.8);
-        transition:0.25s;
-        position:relative;
-    }
-    #popupOverlay.active #popupBox { transform:scale(1); }
-    #popupMessage { font-size:20px; margin-bottom:20px; }
-    .popupBtn {
-        padding:10px 15px;
-        font-size:16px;
-        border:none;
-        border-radius:10px;
-        cursor:pointer;
-        margin:5px;
-    }
-    .btnConfirm { background:#4CAF50; color:white; }
-    .btnCancel { background:#d9534f; color:white; }
-
-    /* Drapeau allemand */
-    #germanFlag {
-        width:200px;
-        height:120px;
-        margin:15px auto;
-        border:2px solid #000;
-        cursor:pointer;
-        position:relative;
-    }
-    .stripe {
-        width:100%;
-        height:33.33%;
-        transition:background 0.5s;
-    }
-    #black { background:black; opacity:0; }
-    #red { background:red; opacity:0; }
-    #yellow { background:yellow; opacity:0; }
-
-    /* Confettis */
-    .confetti {
-        position:absolute;
-        width:8px;
-        height:8px;
-        border-radius:50%;
-        pointer-events:none;
-        animation:fall 1s forwards;
-    }
-    @keyframes fall {
-        0% { transform:translateY(0) scale(1); opacity:1; }
-        100% { transform:translateY(200px) scale(0.5); opacity:0; }
-    }
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#17604f,#0f3f36 60%,#0a2b25);font-family:"Trebuchet MS",Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px 14px 40px;color:#fff;position:relative;overflow-x:hidden}
+header{display:flex;align-items:center;gap:14px;margin:6px 0 22px;animation:pop .6s backwards}
+h1{margin:0;font-size:clamp(1.7rem,6vw,2.7rem);text-align:center}
+#logo{width:clamp(54px,12vw,84px);height:auto;overflow:visible}
+#logo .tree{transform-origin:50% 100%;animation:sway 4s ease-in-out infinite}
+#logo .star{transform-origin:50px 15px;animation:twinkle 1.6s ease-in-out infinite}
+#logo .o{animation:blink 1.8s ease-in-out infinite}
+#logo .o:nth-of-type(2){animation-delay:.4s}#logo .o:nth-of-type(3){animation-delay:.8s}#logo .o:nth-of-type(4){animation-delay:1.2s}
+#calendar{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:16px;width:min(1100px,100%)}
+.day{--i:0;height:150px;background:#b42222;border:3px solid #8c1e1e;border-radius:14px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;font-size:24px;transition:transform .2s,background .3s;animation:pop .5s backwards;animation-delay:calc(var(--i)*35ms);box-shadow:0 5px 0 #7a1717;user-select:none}
+.day:hover{transform:translateY(-5px) rotate(-1.5deg)}
+.day:active{transform:translateY(2px) scale(.97);box-shadow:0 2px 0 #7a1717}
+.day .ico{font-size:30px}
+.day.opened{background:#e4d32b;color:#222;border-color:#c7b924;box-shadow:0 5px 0 #a89b1c}
+.day.just .ico{animation:cheer .8s}
+.label{font-size:14px;margin-top:6px;text-align:center}
+#resetBtn{margin-top:30px;padding:12px 24px;font-size:18px;border:none;border-radius:10px;background:#d9534f;color:#fff;cursor:pointer;transition:.2s;box-shadow:0 4px 0 #a02a27}
+#resetBtn:hover{background:#c9302c;transform:translateY(-2px)}#resetBtn:active{transform:translateY(2px);box-shadow:none}
+#fullscreenBtn{position:fixed;top:14px;right:14px;width:52px;height:52px;background:#ffffffcc;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px;color:#0f3f36;transition:.2s;border:none;z-index:999}
+#fullscreenBtn:hover{background:#fff;transform:scale(1.12) rotate(8deg)}
+/* neige */
+.snowbox{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.snow{position:absolute;top:-8vh;color:#fff;opacity:.7;animation:snowfall linear infinite}
+header,#calendar,#resetBtn{position:relative;z-index:1}
+/* fenêtre */
+#popupOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:.25s;z-index:1000;padding:14px}
+#popupOverlay.active{visibility:visible;opacity:1}
+#popupBox{background:#fff;color:#222;width:min(420px,100%);padding:26px 22px;border-radius:20px;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,.4);transform:scale(.7) rotate(-3deg);transition:.3s cubic-bezier(.3,1.6,.5,1);position:relative}
+#popupOverlay.active #popupBox{transform:none}
+.big{font-size:64px;line-height:1;margin-bottom:8px;display:inline-block;animation:bounce 1.6s ease-in-out infinite}
+.q,.msg{font-size:19px;margin:6px 0 16px}
+.opts{display:grid;gap:10px}
+.opt{padding:12px;font-size:19px;border:3px solid #0f3f36;border-radius:14px;background:#f4fff9;color:#0f3f36;cursor:pointer;transition:.15s;box-shadow:0 4px 0 #0f3f36}
+.opt:hover:not(:disabled){transform:translateY(-2px)}
+.opt:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 #0f3f36}
+.opt.good{background:#b8f5d2;animation:yay .5s}
+.opt.bad{background:#ffd0d3;animation:shake .35s;opacity:.7}
+.learn{margin-top:14px;font-size:18px;animation:rise .4s backwards}
+.de{font-size:26px;font-weight:bold;color:#0f3f36}
+.say{border:none;background:#ffd93d;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer;vertical-align:middle;transition:.15s}.say:hover{transform:scale(1.15) rotate(8deg)}
+.art{padding:0 6px;border-radius:6px;color:#fff}.art.der{background:#3a5ff0}.art.die{background:#e5266e}.art.das{background:#0f8a55}
+#popupButtons{margin-top:14px}
+.popupBtn{padding:10px 18px;font-size:16px;border:none;border-radius:10px;cursor:pointer;margin:4px;transition:.15s}.popupBtn:hover{transform:translateY(-2px)}
+.btnConfirm{background:#4CAF50;color:#fff}.btnCancel{background:#d9534f;color:#fff}
+#germanFlag{width:210px;height:126px;margin:12px auto;border:2px solid #000;border-radius:6px;cursor:pointer;overflow:hidden;animation:breathe 1.6s ease-in-out infinite}
+#germanFlag.on{animation:none}
+.stripe{height:33.33%;background:var(--c);color:var(--t);opacity:.2;transition:opacity .6s;display:flex;align-items:center;justify-content:center;font-weight:bold}
+#germanFlag.on .stripe{opacity:1}
+.hint{font-size:14px;color:#666}
+.confetti{position:absolute;width:9px;height:9px;border-radius:50%;pointer-events:none;animation:fall 1.1s forwards}
+@keyframes pop{0%{opacity:0;transform:scale(.6) translateY(12px)}70%{transform:scale(1.05)}100%{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes sway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.3) rotate(18deg)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes cheer{0%,100%{transform:none}30%{transform:translateY(-12px) rotate(-12deg) scale(1.2)}60%{transform:rotate(10deg)}}
+@keyframes yay{0%{transform:scale(1)}50%{transform:scale(1.1) rotate(-2deg)}100%{transform:scale(1)}}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes snowfall{to{transform:translate(30px,112vh) rotate(360deg)}}
+@keyframes fall{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(220px) scale(.5);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.snowbox{display:none}}
 </style>
 </head>
 <body>
+<div class="snowbox" id="snow" aria-hidden="true"></div>
+<button id="fullscreenBtn" aria-label="Plein écran">⛶</button>
 
-<button id="fullscreenBtn">⛶</button>
-
-<h1>🎄 Calendrier de l'Avent 🎄</h1>
+<header>
+  <svg id="logo" viewBox="0 0 100 120" aria-hidden="true">
+    <g class="tree">
+      <rect x="43" y="104" width="14" height="14" rx="2" fill="#8b5a2b"/>
+      <polygon points="50,54 94,104 6,104" fill="#2bc26c"/>
+      <polygon points="50,32 86,80 14,80" fill="#23ac5f"/>
+      <polygon points="50,12 78,52 22,52" fill="#1f9d55"/>
+      <circle class="o" cx="40" cy="45" r="4" fill="#e5266e"/>
+      <circle class="o" cx="60" cy="70" r="4.5" fill="#ffd93d"/>
+      <circle class="o" cx="32" cy="92" r="4.5" fill="#4aa8ff"/>
+      <circle class="o" cx="68" cy="94" r="4.5" fill="#e5266e"/>
+      <path class="star" d="M50 2 L54.5 11.5 L65 12.8 L57.5 20 L59.3 30.5 L50 25.5 L40.7 30.5 L42.5 20 L35 12.8 L45.5 11.5 Z" fill="#ffd93d"/>
+    </g>
+  </svg>
+  <h1>Calendrier de l'Avent</h1>
+</header>
 
 <div id="calendar"></div>
 <button id="resetBtn">Annuler la dernière ouverture</button>
 
-<div id="popupOverlay">
-    <div id="popupBox">
-        <div id="popupMessage"></div>
-        <div id="flagContainer"></div>
-        <div id="popupButtons"></div>
-    </div>
-</div>
+<div id="popupOverlay"><div id="popupBox"><div id="popupBody"></div><div id="popupButtons"></div></div></div>
 
 <script>
-// ---------------------------
-// POPUP CUSTOM
-// ---------------------------
-function showPopup(message, buttons = [], extraHTML = "") {
-    const overlay = document.getElementById("popupOverlay");
-    const msgBox = document.getElementById("popupMessage");
-    const btnBox = document.getElementById("popupButtons");
-    const flagContainer = document.getElementById("flagContainer");
+const $ = id => document.getElementById(id);
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const ART = s => s.replace(/^(der|die|das) /, (m, a) => `<b class="art ${a}">${a}</b> `);
+function say(t) { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = 'de-DE'; u.rate = .85; speechSynthesis.speak(u); } catch (e) {} }
 
-    msgBox.textContent = message;
-    btnBox.innerHTML = "";
-    flagContainer.innerHTML = extraHTML;
+// [emoji, question, bonne réponse, 2 mauvaises, (phrase allemande à prononcer si la réponse est en français)]
+const LESSONS = [null, null,
+  ['🍎', 'Comment dit-on « pomme » en allemand ?', 'der Apfel', ['das Brot', 'die Katze']],
+  ['🎅', 'Comment dit-on « Père Noël » ?', 'der Weihnachtsmann', ['der Osterhase', 'der Schneemann']],
+  ['❄️', 'Comment dit-on « neige » ?', 'der Schnee', ['der Regen', 'die Sonne']],
+  ['🔢', 'Combien font « vier + zwei » ?', 'sechs', ['fünf', 'acht']],
+  ['🐶', 'Comment dit-on « chien » ?', 'der Hund', ['die Katze', 'die Maus']],
+  ['🎁', 'Comment dit-on « cadeau » ?', 'das Geschenk', ['das Haus', 'der Stern']],
+  ['🍪', 'Comment dit-on « biscuit » ?', 'der Keks', ['der Kuchen', 'die Milch']],
+  ['⭐', 'Comment dit-on « étoile » ?', 'der Stern', ['der Mond', 'die Sonne']],
+  ['👋', 'Que veut dire « Guten Morgen » ?', 'Bonjour (le matin)', ['Bonne nuit', 'Merci'], 'Guten Morgen'],
+  ['🔴', 'Comment dit-on « rouge » ?', 'rot', ['blau', 'grün']],
+  ['🕯️', 'Comment dit-on « bougie » ?', 'die Kerze', ['die Lampe', 'der Ofen']],
+  ['🎄', 'Comment dit-on « sapin » ?', 'der Tannenbaum', ['das Haus', 'die Blume']],
+  ['🙏', 'Comment dit-on « merci » ?', 'Danke', ['Bitte', 'Tschüss']],
+  ['🐱', 'Comment dit-on « chat » ?', 'die Katze', ['der Hund', 'die Maus']],
+  ['🔟', 'Quel nombre est « zehn » ?', '10', ['7', '12'], 'zehn'],
+  ['🍞', 'Comment dit-on « pain » ?', 'das Brot', ['der Käse', 'der Apfel']],
+  ['🏠', 'Comment dit-on « maison » ?', 'das Haus', ['der Garten', 'die Tür']],
+  ['🌙', 'Comment dit-on « lune » ?', 'der Mond', ['der Stern', 'die Sonne']],
+  ['🎅', 'Que veut dire « Frohe Weihnachten » ?', 'Joyeux Noël', ['Bon appétit', 'Bon anniversaire'], 'Frohe Weihnachten'],
+  ['🧣', 'Comment dit-on « écharpe » ?', 'der Schal', ['die Mütze', 'der Schuh']],
+  ['⛄', 'Comment dit-on « bonhomme de neige » ?', 'der Schneemann', ['der Weihnachtsmann', 'der Eisbär']],
+  ['😴', 'Que veut dire « Gute Nacht » ?', 'Bonne nuit', ['Bonjour', 'Au revoir'], 'Gute Nacht'],
+  ['🎉', 'Que veut dire « Frohes neues Jahr » ?', 'Bonne année', ['Joyeux Noël', 'Bonne chance'], 'Frohes neues Jahr']
+];
 
-    buttons.forEach(btn => {
-        const b = document.createElement("button");
-        b.textContent = btn.text;
-        b.className = "popupBtn " + (btn.class || "");
-        b.onclick = () => {
-            overlay.classList.remove("active");
-            if (btn.action) btn.action();
-        };
-        btnBox.appendChild(b);
-    });
+/* ---------- fenêtre ---------- */
+function showPopup(html, buttons = [{ text: 'Fermer', class: 'btnConfirm' }]) {
+  $('popupBody').innerHTML = html;
+  const box = $('popupButtons'); box.innerHTML = '';
+  buttons.forEach(b => {
+    const el = document.createElement('button');
+    el.textContent = b.text; el.className = 'popupBtn ' + (b.class || '');
+    el.onclick = () => { closePopup(); if (b.action) b.action(); };
+    box.appendChild(el);
+  });
+  $('popupOverlay').classList.add('active');
+}
+function closePopup() { $('popupOverlay').classList.remove('active'); try { speechSynthesis.cancel(); } catch (e) {} }
+$('popupOverlay').addEventListener('click', e => { if (e.target.id === 'popupOverlay') closePopup(); });
 
-    overlay.classList.add("active");
+function confetti(el, colors = ['#ffd93d', '#ff5c8a', '#3ddc97', '#4aa8ff', '#e5266e']) {
+  for (let i = 0; i < 40; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.background = colors[Math.random() * colors.length | 0];
+    c.style.left = Math.random() * el.offsetWidth + 'px';
+    c.style.top = Math.random() * el.offsetHeight * .4 + 'px';
+    el.appendChild(c);
+    setTimeout(() => c.remove(), 1200);
+  }
 }
 
-// ---------------------------
-// GÉNÉRATION CALENDRIER
-// ---------------------------
-const calendar = document.getElementById("calendar");
-let openedDays = JSON.parse(localStorage.getItem("openedDays")) || [];
+/* ---------- leçons ---------- */
+function flagLesson() {
+  showPopup(`<div class="big">🇩🇪</div><p class="q">Welche Farbe hat die Deutsche Flagge ?</p>
+    <div id="germanFlag">
+      <div class="stripe" style="--c:#000;--t:#fff">Schwarz</div>
+      <div class="stripe" style="--c:#dd0000;--t:#fff">Rot</div>
+      <div class="stripe" style="--c:#ffce00;--t:#000">Gold</div>
+    </div><p class="hint">Touche le drapeau !</p>`);
+  const flag = $('germanFlag');
+  flag.onclick = () => { flag.classList.add('on'); confetti(flag, ['#000', '#dd0000', '#ffce00']); say('Schwarz, Rot, Gold'); };
+}
+
+function quizLesson(day) {
+  const [emoji, q, good, bad, sp] = LESSONS[day], said = sp || good;
+  showPopup(`<div class="big">${emoji}</div><p class="q">${q}</p>
+    <div class="opts">${shuffle([good, ...bad]).map((o, i) => `<button class="opt" data-i="${i}">${ART(o)}</button>`).join('')}</div>
+    <div id="fb"></div>`);
+  const opts = [...document.querySelectorAll('.opt')];
+  const txt = el => el.textContent.trim();
+  opts.forEach(b => b.onclick = () => {
+    if (txt(b) === good) {
+      opts.forEach(o => o.disabled = true);
+      b.classList.add('good');
+      $('fb').innerHTML = `<div class="learn">✨ Bravo !<br><span class="de">${ART(said)}</span> <button class="say" id="sayBtn" aria-label="Écouter">🔊</button>${day === 24 ? '<br>🎄 Frohe Weihnachten ! 🎄' : ''}</div>`;
+      $('sayBtn').onclick = () => say(said);
+      confetti($('popupBox'));
+      if (day === 24) setTimeout(() => confetti($('popupBox')), 500);
+      say(said);
+    } else {
+      b.classList.add('bad'); b.disabled = true;
+      $('fb').innerHTML = `<div class="learn">Oups, essaie encore ! 💪</div>`;
+    }
+  });
+}
+
+/* ---------- calendrier ---------- */
+const calendar = $('calendar');
+let openedDays = [];
+try { openedDays = JSON.parse(localStorage.getItem('openedDays')) || []; } catch (e) {}
+const save = () => { try { localStorage.setItem('openedDays', JSON.stringify(openedDays)); } catch (e) {} };
+const iconOf = i => LESSONS[i] ? LESSONS[i][0] : '🇩🇪';
 
 function createCalendar() {
-    calendar.innerHTML = "";
-    for (let i = 1; i <= 24; i++) {
-        const div = document.createElement("div");
-        div.classList.add("day");
-        div.dataset.day = i;
-        div.innerHTML = `
-            <div>⭐</div>
-            <div>${i}</div>
-            <div class="label">${openedDays.includes(i) ? "Déjà ouverte 🎁" : "À ouvrir 🎄"}</div>
-        `;
-        if (openedDays.includes(i)) div.classList.add("opened");
-        div.onclick = () => openDay(i, div);
-        calendar.appendChild(div);
-    }
+  calendar.innerHTML = '';
+  for (let i = 1; i <= 24; i++) {
+    const div = document.createElement('div');
+    const open = openedDays.includes(i);
+    div.className = 'day' + (open ? ' opened' : '');
+    div.style.setProperty('--i', i);
+    div.innerHTML = `<div class="ico">${open ? iconOf(i) : '⭐'}</div><div>${i}</div><div class="label">${open ? 'Déjà ouverte 🎁' : 'À ouvrir 🎄'}</div>`;
+    div.onclick = () => openDay(i, div);
+    calendar.appendChild(div);
+  }
 }
 
-// ---------------------------
-// OUVERTURE CASE
-// ---------------------------
-function openDay(day, element) {
-    if(day === 1 && !openedDays.includes(1)){
-        // Première case spéciale
-        const flagHTML = `
-        <div id="germanFlag">
-            <div class="stripe" id="black"></div>
-            <div class="stripe" id="red"></div>
-            <div class="stripe" id="yellow"></div>
-        </div>`;
-        showPopup("Welche Farbe hat die Deutsche Flagge ?", [
-            { text:"OK", class:"btnConfirm" }
-        ], flagHTML);
-
-        const flag = document.getElementById("germanFlag");
-        flag.onclick = () => {
-            document.getElementById("black").style.opacity = 1;
-            document.getElementById("red").style.opacity = 1;
-            document.getElementById("yellow").style.opacity = 1;
-            triggerConfetti(flag, ["black","red","yellow"]);
-        };
-    } else {
-        showPopup("🎁 Tu as ouvert la case " + day + " !", [
-            { text:"OK", class:"btnConfirm" }
-        ]);
-    }
-
-    if (!openedDays.includes(day)) {
-        openedDays.push(day);
-        localStorage.setItem("openedDays", JSON.stringify(openedDays));
-    }
-    element.classList.add("opened");
-    element.querySelector(".label").textContent = "Déjà ouverte 🎁";
+function openDay(day, el) {
+  if (day === 1) flagLesson(); else quizLesson(day);
+  if (!openedDays.includes(day)) { openedDays.push(day); save(); }
+  el.classList.add('opened', 'just');
+  el.querySelector('.ico').textContent = iconOf(day);
+  el.querySelector('.label').textContent = 'Déjà ouverte 🎁';
+  setTimeout(() => el.classList.remove('just'), 900);
 }
 
-// ---------------------------
-// CONFETTI
-// ---------------------------
-function triggerConfetti(element, colors){
-    for(let i=0;i<50;i++){
-        const conf = document.createElement("div");
-        conf.classList.add("confetti");
-        conf.style.background = colors[Math.floor(Math.random()*colors.length)];
-        conf.style.left = Math.random()*element.offsetWidth + "px";
-        conf.style.top = Math.random()*element.offsetHeight + "px";
-        element.appendChild(conf);
-        setTimeout(()=>conf.remove(),1000 + Math.random()*500);
-    }
-}
-
-// ---------------------------
-// RESET DERNIÈRE CASE
-// ---------------------------
-document.getElementById("resetBtn").onclick = () => {
-    if (openedDays.length === 0) {
-        showPopup("❗ Aucune case ouverte à annuler.", [
-            { text:"OK", class:"btnConfirm" }
-        ]);
-        return;
-    }
-    const last = openedDays[openedDays.length - 1];
-    showPopup("❓ Annuler l’ouverture de la case " + last + " ?", [
-        {
-            text:"Oui",
-            class:"btnConfirm",
-            action: () => {
-                openedDays.pop();
-                localStorage.setItem("openedDays", JSON.stringify(openedDays));
-                createCalendar();
-            }
-        },
-        { text:"Non", class:"btnCancel" }
-    ]);
+$('resetBtn').onclick = () => {
+  if (!openedDays.length) { showPopup('<div class="big">🤔</div><p class="msg">Aucune case ouverte à annuler.</p>'); return; }
+  const last = openedDays[openedDays.length - 1];
+  showPopup(`<div class="big">↩️</div><p class="msg">Annuler l’ouverture de la case ${last} ?</p>`, [
+    { text: 'Oui', class: 'btnConfirm', action: () => { openedDays.pop(); save(); createCalendar(); } },
+    { text: 'Non', class: 'btnCancel' }
+  ]);
 };
 
-// ---------------------------
-// MODE PLEIN ECRAN
-// ---------------------------
-const fullscreenBtn = document.getElementById("fullscreenBtn");
-fullscreenBtn.onclick = () => {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-        fullscreenBtn.textContent = "🡸";
-    } else {
-        document.exitFullscreen();
-        fullscreenBtn.textContent = "⛶";
-    }
+/* ---------- plein écran ---------- */
+const fsBtn = $('fullscreenBtn');
+if (!document.documentElement.requestFullscreen) fsBtn.hidden = true;
+fsBtn.onclick = () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+  else document.exitFullscreen();
 };
-document.addEventListener("fullscreenchange", () => {
-    if (!document.fullscreenElement) fullscreenBtn.textContent = "⛶";
-});
+document.addEventListener('fullscreenchange', () => { fsBtn.textContent = document.fullscreenElement ? '🡸' : '⛶'; });
 
-// ---------------------------
-// INIT
-// ---------------------------
+/* ---------- neige douce ---------- */
+for (let i = 0; i < 22; i++) {
+  const s = document.createElement('i');
+  s.className = 'snow'; s.textContent = '❄';
+  s.style.left = Math.random() * 100 + 'vw';
+  s.style.fontSize = 10 + Math.random() * 14 + 'px';
+  s.style.animationDuration = 9 + Math.random() * 9 + 's';
+  s.style.animationDelay = -Math.random() * 14 + 's';
+  $('snow').appendChild(s);
+}
+
 createCalendar();
 </script>
 </body>
